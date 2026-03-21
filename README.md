@@ -46,6 +46,39 @@ You can install `lcli` easily using the provided install script:
 
 This will download the latest release for your platform and place the binary in `/usr/local/bin` (or prompt for a path).
 
+### Install on Windows
+
+Windows users can install `lcli` using the PowerShell install script:
+
+1. Open PowerShell (non-admin is fine).  
+2. Temporarily allow script execution:
+
+    ```powershell
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+    ```
+
+3. Download and run the install script:
+
+    ```powershell
+    iex (iwr https://raw.githubusercontent.com/gonardfreeman/lcli/main/install.ps1 -UseBasicParsing)
+    ```
+
+This script will:
+
+- Download the latest Windows release (`.exe`) from GitHub  
+- Place it in a folder like `$HOME\bin`  
+- Optionally, you can add that folder to your PATH for global use:
+
+    ```powershell
+    [Environment]::SetEnvironmentVariable("PATH", "$env:USERPROFILE\bin;" + $env:PATH, [EnvironmentVariableTarget]::User)
+    ```
+
+After that, you can run `lcli` from any PowerShell or Command Prompt session:
+
+```powershell
+lcli --name Alice
+# Hello, Alice!
+
 ---
 
 ## 🎯 Usage
