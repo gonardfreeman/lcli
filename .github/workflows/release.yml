@@ -44,12 +44,14 @@ jobs:
           targets: ${{ matrix.target }}
 
       - name: Install cross(cached)
+        shell: bash
         run: |
           if ! command -v cross >/dev/null; then
             cargo install cross
           fi
 
       - name: Build
+        shell: bash
         run: |
           if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
             cross build --release --target ${{ matrix.target }}
@@ -58,6 +60,7 @@ jobs:
           fi
 
       - name: Prepare binary
+        shell: bash
         run: |
           mkdir -p dist
           BIN_NAME="lcli"
