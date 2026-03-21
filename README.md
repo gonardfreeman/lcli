@@ -78,6 +78,7 @@ After that, you can run `lcli` from any PowerShell or Command Prompt session:
 ```powershell
 lcli --name Alice
 # Hello, Alice!
+```
 
 ---
 
