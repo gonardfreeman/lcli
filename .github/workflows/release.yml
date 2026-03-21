@@ -37,7 +37,7 @@ jobs:
           targets: ${{ matrix.target }}
 
       - name: Install cross
-        run: cargo isntall cross
+        run: cargo install cross
 
       - name: Build
         run: cross build --release --target ${{ matrix.target }}
