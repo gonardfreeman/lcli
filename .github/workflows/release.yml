@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build binaries
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-unknown-gnu-linux
+            name: lcli-linux-x86_64
+
+          - target: x86_64-apple-darwin
+            name: lcli-macos-x86_64
+
+          - target: aarch64-apple-darwin
+            name: lcli-macos-arm64
+
+          - target: x86_64-pc-windows-msvc
+            name: lcli-windows-x86_64.exe
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install cross
+        run: cargo isntall cross
+
+      - name: Build
+        run: cross build --release --target ${{ matrix.target }}
+
+      - name: Prepare binary
+        run: |
+          mkdir -p dist
+          BIN_NAME="lcli"
+
+          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
+            cp target/${{ matrix.target }}/release/$BIN_NAME.exe dist/${{ matrix.name }}
+          else
+            cp target/${{ matrix.target }}/release/$BIN_NAME dist/${{ matrix.name }}
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: dist/${{ matrix.name }}
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Flatten files
+        run: |
+          mkdir flat
+          find dist -type f -exec cp {} flat/ \;
+
+      - name: Generate checksums
+        run: |
+          cd flat
+          sha256sum * > checksums.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: flat/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
