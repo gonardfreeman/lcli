@@ -1,13 +1,36 @@
-use clap::{Parser /*, Subcommand */};
+mod config;
+mod models;
+mod requests;
 
-#[derive(Parser)]
-#[command(author, version, about, long_about= None)]
-struct Args {
-    #[arg(short, long, default_value = "shuttle")]
-    name: String,
+use anyhow::*;
+use clap::{Parser, Subcommand};
+
+use crate::requests::get_issue::fetch_linear_issue;
+
+#[derive(Parser, Debug)]
+#[command(name = "Linear CLI")]
+#[command(version = "1.0")]
+#[command(about = "Simple Linear CLI", long_about = None)]
+struct Lcli {
+    #[command(subcommand)]
+    command: Commands,
 }
 
-fn main() {
-    let args = Args::parse();
-    println!("Hello, {}!", args.name);
+#[derive(Subcommand, Debug, Clone)]
+enum Commands {
+    /// Gets issue from linear
+    Get { issue_key: String },
+}
+
+fn main() -> Result<(), Error> {
+    env_logger::init();
+    let cli = Lcli::parse();
+
+    match &cli.command {
+        Commands::Get { issue_key } => {
+            let _ = fetch_linear_issue(issue_key);
+        }
+    }
+
+    Ok(())
 }
