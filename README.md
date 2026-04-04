@@ -1,5 +1,3 @@
-# LCLI
-
 <h1 align="center">LCLI</h1>
 
 <p align="center">
