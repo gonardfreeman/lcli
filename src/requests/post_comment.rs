@@ -5,9 +5,12 @@ use anyhow::*;
 use graphql_client::reqwest::post_graphql_blocking;
 use prettytable::*;
 use reqwest::blocking::Client;
-use serde_json::error;
 
-pub fn post_linear_comment(issue_key: &String, body: &String) -> Result<(), anyhow::Error> {
+pub fn post_linear_comment(
+    issue_key: &String,
+    body: &String,
+    dont_subscribe: &Option<bool>,
+) -> Result<(), anyhow::Error> {
     let linear_api_token =
         std::env::var("LINEAR_API_KEY").expect("Missing LINEAR_API_KEY in your env");
 
@@ -21,7 +24,7 @@ pub fn post_linear_comment(issue_key: &String, body: &String) -> Result<(), anyh
             create_on_synced_slack_thread: None,
             created_at: None,
             display_icon_url: None,
-            do_not_subscribe_to_issue: None,
+            do_not_subscribe_to_issue: dont_subscribe.to_owned(),
             document_content_id: None,
             id: None,
             initiative_id: None,

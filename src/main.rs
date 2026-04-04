@@ -26,6 +26,8 @@ enum Commands {
         issue_key: String,
         #[arg(long, short)]
         body: String,
+        #[arg(long, short)]
+        dont_subscribe: Option<bool>,
     },
 }
 
@@ -37,8 +39,12 @@ fn main() -> Result<(), Error> {
         Commands::Get { issue_key } => {
             let _ = fetch_linear_issue(issue_key);
         }
-        Commands::PostComment { issue_key, body } => {
-            let _ = post_linear_comment(issue_key, body);
+        Commands::PostComment {
+            issue_key,
+            body,
+            dont_subscribe,
+        } => {
+            let _ = post_linear_comment(issue_key, body, dont_subscribe);
         }
     }
 
