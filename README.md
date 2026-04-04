@@ -28,25 +28,19 @@
   </a>
 </p>
 
+---
 
-**lcli** is a simple command-line Rust application that prints a greeting message based on user input.
-
-It uses the **Clap** argument parser to accept a `name` string and prints:
-
-    Hello, <name>!
-
-Example usage:
-
-    lcli --name Alice
-    # outputs: Hello, Alice!
+**lcli** is a simple Rust-based command-line tool for interacting with Linear issues.
 
 ---
 
 ## 🧠 Features
 
-- Simple CLI built with **Clap**
-- Cross-platform Rust executable
-- Configurable via a `--name` argument
+* Fetch Linear issues by key
+* Post comments to issues
+* Optional control over subscription behavior
+* Lightweight and fast Rust binary
+* Built with **Clap**
 
 ---
 
@@ -54,131 +48,174 @@ Example usage:
 
 ### From source
 
-Clone the repository:
+```bash
+git clone https://github.com/gonardfreeman/lcli.git
+cd lcli
+cargo build --release
+```
 
-    git clone https://github.com/gonardfreeman/lcli.git
-    cd lcli
+Binary location:
 
-Build the project:
+```bash
+target/release/lcli
+```
 
-    cargo build --release
+---
 
-The binary will be under:
+### Install via script (Linux/macOS)
 
-    target/release/lcli
+```bash
+curl -sSL https://raw.githubusercontent.com/gonardfreeman/lcli/main/install.sh | bash
+```
 
-### Install via script (curl)
+This installs the latest release to `/usr/local/bin` (or prompts for a location).
 
-You can install `lcli` easily using the provided install script:
-
-    curl -sSL https://raw.githubusercontent.com/gonardfreeman/lcli/main/install.sh | bash
-
-This will download the latest release for your platform and place the binary in `/usr/local/bin` (or prompt for a path).
+---
 
 ### Install on Windows
 
-Windows users can install `lcli` using the PowerShell install script:
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+iex (iwr https://raw.githubusercontent.com/gonardfreeman/lcli/main/install.ps1 -UseBasicParsing)
+```
 
-1. Open PowerShell (non-admin is fine).  
-2. Temporarily allow script execution:
-
-    ```powershell
-    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-    ```
-
-3. Download and run the install script:
-
-    ```powershell
-    iex (iwr https://raw.githubusercontent.com/gonardfreeman/lcli/main/install.ps1 -UseBasicParsing)
-    ```
-
-This script will:
-
-- Download the latest Windows release (`.exe`) from GitHub  
-- Place it in a folder like `$HOME\bin`  
-- Optionally, you can add that folder to your PATH for global use:
-
-    ```powershell
-    [Environment]::SetEnvironmentVariable("PATH", "$env:USERPROFILE\bin;" + $env:PATH, [EnvironmentVariableTarget]::User)
-    ```
-
-After that, you can run `lcli` from any PowerShell or Command Prompt session:
+Optional: add to PATH
 
 ```powershell
-lcli --name Alice
-# Hello, Alice!
+[Environment]::SetEnvironmentVariable("PATH", "$env:USERPROFILE\bin;" + $env:PATH, [EnvironmentVariableTarget]::User)
+```
+
+---
+
+## 🔐 Authentication
+
+`lcli` requires a Linear API key.
+
+Set it as an environment variable:
+
+```bash
+export LINEAR_API_KEY=your_api_key
+```
+
+On Windows:
+
+```powershell
+setx LINEAR_API_KEY "your_api_key"
 ```
 
 ---
 
 ## 🎯 Usage
 
-Run without arguments:
+### Get an issue
 
-    lcli
-    # Hello, shuttle!
-
-Or specify a name:
-
-    lcli --name Alice
-    # Hello, Alice!
+```bash
+lcli get LIN-15
+```
 
 ---
 
-## ⚙️ Command Line Options
+### Post a comment
 
-| Flag                 | Description                               |
-|----------------------|-------------------------------------------|
-| `-n`, `--name <NAME>` | Set the name to greet (default: `shuttle`) |
+```bash
+lcli post-comment -i LIN-15 -b "This is a comment"
+```
+
+---
+
+### Post a comment without subscribing
+
+```bash
+lcli post-comment -i LIN-15 -b "This is a comment" -d true
+```
+
+---
+
+## ⚙️ Commands
+
+### `get`
+
+Fetch a Linear issue by key.
+
+```bash
+lcli get <ISSUE_KEY>
+```
+
+---
+
+### `post-comment`
+
+Post a comment to a Linear issue.
+
+```bash
+lcli post-comment [OPTIONS]
+```
+
+| Flag                     | Description                   |
+| ------------------------ | ----------------------------- |
+| `-i`, `--issue-key`      | Issue key (e.g., `LIN-15`)    |
+| `-b`, `--body`           | Comment body                  |
+| `-d`, `--dont-subscribe` | Do not subscribe to the issue |
 
 ---
 
 ## 📦 Releases
 
-Precompiled releases are available in the **Releases** section on GitHub (e.g., `v0.1.5`).  
+Precompiled binaries are available on GitHub:
+
 [https://github.com/gonardfreeman/lcli/releases](https://github.com/gonardfreeman/lcli/releases)
 
 ---
 
 ## 🛠️ Development
 
-To run locally in debug mode:
+Run locally:
 
-    cargo run -- --name <your name>
+```bash
+cargo run -- get LIN-15
+```
 
-To build and optimize:
+```bash
+cargo run -- post-comment -i LIN-15 -b "test"
+```
 
-    cargo build --release
+Build optimized binary:
+
+```bash
+cargo build --release
+```
 
 ---
 
 ## 📁 Project Structure
 
-- `src/main.rs` — primary source file  
-- `Cargo.toml` — project manifest  
-- `install.sh` — optional install helper script
+* `src/main.rs` — CLI entry point
+* `src/requests/` — API request logic
+* `src/models/` — data models
+* `src/config/` — configuration handling
+* `install.sh` / `install.ps1` — install scripts
 
 ---
 
 ## 📝 License
 
-`lcli` is open-source and free to use under the MIT License.
-
-You can copy or modify it freely, and redistribute under the same license.
+MIT License — free to use, modify, and distribute.
 
 ---
 
 ## 👍 Contributing
 
-Contributions are welcome! You can:
+Contributions welcome:
 
-- open issues  
-- submit pull requests  
-- suggest improvements
+* Open issues
+* Submit PRs
+* Suggest improvements
 
 ---
 
 ## 🧩 Notes
 
-- Consider renaming the binary in `Cargo.toml` so that the output file is named `lcli` instead of the default crate name.  
-- Add documentation, examples, and tests as the project grows.
+* Uses `env_logger` for logging
+* Errors are handled via `anyhow`
+* CLI parsing powered by `clap`
+

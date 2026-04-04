@@ -20,6 +20,7 @@ struct Lcli {
 enum Commands {
     /// Gets issue from linear
     Get { issue_key: String },
+
     /// Post comment to issue
     PostComment {
         #[arg(long, short)]
