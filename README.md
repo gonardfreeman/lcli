@@ -1,4 +1,35 @@
-# 📦 lcli
+# LCLI
+
+<h1 align="center">LCLI</h1>
+
+<p align="center">
+  Simple Linear CLI
+</p>
+
+<p align="center">
+  <a href="https://github.com/gonardfreeman/lcli/releases">
+    <img src="https://img.shields.io/github/v/release/gonardfreeman/lcli?label=version" />
+  </a>
+  <a href="https://github.com/gonardfreeman/lcli/actions">
+    <img src="https://github.com/gonardfreeman/lcli/actions/workflows/release.yml/badge.svg" />
+  </a>
+  <a href="https://github.com/gonardfreeman/lcli/actions">
+    <img src="https://github.com/gonardfreeman/lcli/actions/workflows/test.yml/badge.svg" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/gonardfreeman/lcli/releases/latest/download/lcli-linux-x86_64">
+    <img src="https://img.shields.io/badge/Linux-download-blue?logo=linux" />
+  </a>
+  <a href="https://github.com/gonardfreeman/lcli/releases/latest/download/lcli-macos-x86_64">
+    <img src="https://img.shields.io/badge/macOS-download-black?logo=apple" />
+  </a>
+  <a href="https://github.com/gonardfreeman/lcli/releases/latest/download/lcli-windows-x86_64.exe">
+    <img src="https://img.shields.io/badge/Windows-download-blue?logo=windows" />
+  </a>
+</p>
+
 
 **lcli** is a simple command-line Rust application that prints a greeting message based on user input.
 
