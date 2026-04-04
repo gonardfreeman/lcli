@@ -5,7 +5,7 @@ mod requests;
 use anyhow::*;
 use clap::{Parser, Subcommand};
 
-use crate::requests::get_issue::fetch_linear_issue;
+use crate::requests::{get_issue::fetch_linear_issue, post_comment::post_linear_comment};
 
 #[derive(Parser, Debug)]
 #[command(name = "Linear CLI")]
@@ -20,6 +20,13 @@ struct Lcli {
 enum Commands {
     /// Gets issue from linear
     Get { issue_key: String },
+    /// Post comment to issue
+    PostComment {
+        #[arg(long, short)]
+        issue_key: String,
+        #[arg(long, short)]
+        body: String,
+    },
 }
 
 fn main() -> Result<(), Error> {
@@ -29,6 +36,9 @@ fn main() -> Result<(), Error> {
     match &cli.command {
         Commands::Get { issue_key } => {
             let _ = fetch_linear_issue(issue_key);
+        }
+        Commands::PostComment { issue_key, body } => {
+            let _ = post_linear_comment(issue_key, body);
         }
     }
 

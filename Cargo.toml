@@ -11,3 +11,6 @@ graphql_client = { version = "0.16.0", features = ["reqwest-blocking"] }
 log = "0.4.29"
 prettytable = "0.10.0"
 reqwest = { version = "0.12", features = ["blocking", "json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", features = ["serde"] }

@@ -1,0 +1,12 @@
+mutation PostComment($input: CommentCreateInput!) {
+  commentCreate(input: $input) {
+    comment {
+      body
+      issueId
+      id
+    }
+    lastSyncId
+    success
+  }
+}
+
