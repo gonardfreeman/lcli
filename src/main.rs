@@ -44,9 +44,7 @@ fn main() -> Result<(), AnyError> {
     let linear_api_token =
         std::env::var("LINEAR_API_KEY").expect("Missing LINEAR_API_KEY in your env");
     let linear_client = LinearClient::new(&linear_api_token);
-
     let cli = Lcli::parse();
-
     match &cli.command {
         Commands::Get { issue_key } => {
             let linear_issue = linear_client.get_comment(issue_key);
@@ -69,6 +67,5 @@ fn main() -> Result<(), AnyError> {
             }
         }
     }
-
     AnyOk(())
 }
