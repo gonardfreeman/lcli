@@ -2,7 +2,7 @@ use crate::models::comment::post_comment::PostCommentCommentCreate;
 use crate::models::issue::get_issue::GetIssueIssue;
 use prettytable::*;
 
-enum LinearResponseData {
+pub enum LinearResponseData {
     GetIssueIssue(GetIssueIssue),
     PostCommentCommentCreate(PostCommentCommentCreate),
 }

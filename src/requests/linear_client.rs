@@ -11,7 +11,7 @@ use crate::models::issue::{
     get_issue::{GetIssueIssue, ResponseData as GetIssueResponse, Variables as GetIssueVariables},
 };
 
-use anyhow::*;
+use anyhow::{Error as AnyError, Ok as AnyOk, anyhow as any_macro};
 use graphql_client::reqwest::post_graphql_blocking;
 use reqwest::blocking::Client;
 use reqwest::header::{AUTHORIZATION, HeaderMap, HeaderValue, USER_AGENT as USER_AGENT_KEY};
@@ -38,7 +38,7 @@ impl LinearClient {
         Self { http: client }
     }
 
-    pub fn get_comment(&self, issue_key: &String) -> Result<GetIssueIssue, anyhow::Error> {
+    pub fn get_comment(&self, issue_key: &String) -> Result<GetIssueIssue, AnyError> {
         let variables = GetIssueVariables {
             issue_id: issue_key.to_string(),
         };
@@ -52,7 +52,7 @@ impl LinearClient {
             )
         }
         let response_data: GetIssueResponse = response_body.data.expect("No response data");
-        Ok(response_data.issue)
+        AnyOk(response_data.issue)
     }
 
     pub fn post_comment(
@@ -60,7 +60,7 @@ impl LinearClient {
         issue_key: &String,
         body: &String,
         dont_subscribe: &Option<bool>,
-    ) -> Result<PostCommentCommentCreate, anyhow::Error> {
+    ) -> Result<PostCommentCommentCreate, AnyError> {
         let variables = PostCommentVariables {
             input: CommentCreateInput {
                 body: Some(body.to_string()),
@@ -91,10 +91,12 @@ impl LinearClient {
                 "Failed with:\n{}",
                 serde_json::to_string_pretty(&err).unwrap()
             );
-            return Err(anyhow!("Failed to post a comment to linear: {issue_key:}"));
+            return Err(any_macro!(
+                "Failed to post a comment to linear: {issue_key:}",
+            ));
         }
         let response_data: PostCommentResponseData = response_body.data.unwrap();
 
-        Ok(response_data.comment_create)
+        AnyOk(response_data.comment_create)
     }
 }

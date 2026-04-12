@@ -3,17 +3,14 @@ mod models;
 mod requests;
 mod utils;
 
-use anyhow::*;
+use anyhow::{Error as AnyError, Ok as AnyOk};
+use std::result::Result::Ok;
 
 use clap::{Parser, Subcommand};
 
 use crate::{
-    models::issue::get_issue::GetIssueIssue,
-    requests::{
-        get_issue::fetch_linear_issue, linear_client::LinearClient,
-        post_comment::post_linear_comment,
-    },
-    utils::{print, print_table::print_linear_results},
+    requests::linear_client::LinearClient,
+    utils::print_table::{LinearResponseData, print_linear_results},
 };
 
 #[derive(Parser, Debug)]
@@ -41,7 +38,7 @@ enum Commands {
     },
 }
 
-fn main() -> Result<(), Error> {
+fn main() -> Result<(), AnyError> {
     env_logger::init();
 
     let linear_api_token =
@@ -54,12 +51,8 @@ fn main() -> Result<(), Error> {
         Commands::Get { issue_key } => {
             let linear_issue = linear_client.get_comment(issue_key);
             match linear_issue {
-                Ok(issue) => {
-                    print_linear_results(&issue);
-                }
-                Err(_) => {
-                    println!("Error getting issue");
-                }
+                Ok(issue) => print_linear_results(&LinearResponseData::GetIssueIssue(issue)),
+                Err(error) => println!("Error getting issue: {error:?}"),
             }
         }
         Commands::PostComment {
@@ -68,9 +61,14 @@ fn main() -> Result<(), Error> {
             dont_subscribe,
         } => {
             let comment = linear_client.post_comment(issue_key, body, dont_subscribe);
-            print_linear_results(&comment);
+            match comment {
+                Ok(comment_response) => print_linear_results(
+                    &LinearResponseData::PostCommentCommentCreate(comment_response),
+                ),
+                Err(error) => println!("Error posting comment: {error:?}"),
+            }
         }
     }
 
-    Ok(())
+    AnyOk(())
 }
