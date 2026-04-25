@@ -38,7 +38,7 @@ impl LinearClient {
         Self { http: client }
     }
 
-    pub fn get_comment(&self, issue_key: &String) -> Result<GetIssueIssue, AnyError> {
+    pub fn get_issue(&self, issue_key: &String) -> Result<GetIssueIssue, AnyError> {
         let variables = GetIssueVariables {
             issue_id: issue_key.to_string(),
         };
