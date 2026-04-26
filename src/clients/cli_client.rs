@@ -4,21 +4,15 @@ use pico_args::Arguments;
 use crate::{
     Args,
     clients::linear_client::LinearClient,
+    constants::{
+        errors::{
+            ERROR_GETTING_ISSUE, ERROR_POSTING_COMMENT, MISSING_COMMENT_BODY, NO_INPUT_ARGS,
+            NO_ISSUE_KEY, UNKNOWN_PARAM,
+        },
+        texts::{HELP_TEXT, VERSION},
+    },
     utils::{misc::convert_os_to_str, print_table::print_linear_results},
 };
-
-static VERSION: &str = env!("CARGO_PKG_VERSION");
-const HELP_TEXT: &str = "
-Usage: lcli [options] <inputs>...
-       lcli --help
-       lcli (-v|--version)
-
-Inputs:
-
-Options:
-    -h, --help      Print help
-    -v, --version   Print version
-";
 
 pub struct Commands<'a> {
     args: &'a Args,
@@ -32,13 +26,7 @@ impl<'a> Commands<'a> {
         Self {
             args,
             main: args.arg_inputs.to_owned(),
-            // drop first, because it will set above
-            rest: pargs
-                .finish()
-                .into_iter()
-                .skip(1)
-                .map(|s| convert_os_to_str(&s))
-                .collect(),
+            rest: pargs.finish().iter().map(convert_os_to_str).collect(),
             linear_client,
         }
     }
@@ -49,7 +37,7 @@ impl<'a> Commands<'a> {
         if let Some(issue_key) = self.rest.first() {
             Ok(issue_key)
         } else {
-            Err(any_macro!("No issue key provided"))
+            Err(any_macro!(NO_ISSUE_KEY))
         }
     }
 
@@ -64,7 +52,7 @@ impl<'a> Commands<'a> {
                         );
                         AnyOk(())
                     }
-                    Err(error) => Err(any_macro!("Error getting issue: {}", error)),
+                    Err(error) => Err(any_macro!("{} {}", ERROR_GETTING_ISSUE, error)),
                 }
             }
             Err(error) => Err(any_macro!("{}", error)),
@@ -74,8 +62,26 @@ impl<'a> Commands<'a> {
     fn post_comment(&self) -> Result<(), AnyError> {
         match self.get_issue_key() {
             Ok(issue_key) => {
-                println!("{}", issue_key);
-                println!("rest: {:?}", self.rest);
+                println!("Issue: {}", issue_key);
+                println!("Comment body: {:?}", self.rest);
+                let comment_body = self
+                    .rest
+                    .get(1..)
+                    .ok_or_else(|| any_macro!("{}", MISSING_COMMENT_BODY))?
+                    .join(" ");
+                let comment = self.linear_client.post_comment(
+                    issue_key,
+                    &comment_body,
+                    &self.args.flag_dont_subscribe,
+                );
+                match comment {
+                    Ok(comment_response) => print_linear_results(
+                        &crate::utils::print_table::LinearResponseData::PostCommentCommentCreate(
+                            comment_response,
+                        ),
+                    ),
+                    Err(error) => println!("{} {}", ERROR_POSTING_COMMENT, error),
+                }
                 AnyOk(())
             }
             Err(error) => Err(any_macro!("{}", error)),
@@ -86,7 +92,7 @@ impl<'a> Commands<'a> {
 impl<'a> Commands<'a> {
     pub fn execute(&self) -> Result<(), AnyError> {
         if self.args.arg_inputs.is_empty() {
-            return Err(any_macro!("no input args provided"));
+            return Err(any_macro!(NO_INPUT_ARGS));
         }
         if self.args.flag_help {
             println!("{}", HELP_TEXT);
@@ -101,7 +107,7 @@ impl<'a> Commands<'a> {
         match self.main.as_str() {
             "get" => self.get_issue(),
             "comment" => self.post_comment(),
-            &_ => Err(any_macro!("Unknown param")),
+            &_ => Err(any_macro!(UNKNOWN_PARAM)),
         }
     }
 }

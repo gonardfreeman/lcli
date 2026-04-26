@@ -1,4 +1,5 @@
 use crate::config::constants::{LINEAR_URL, USER_AGENT};
+use crate::constants::errors::{CANT_BUILD_CLIENT, FAILED_TO_POST, FAILED_WITH, NO_RESPONSE_DATA};
 use crate::models::comment::{
     PostComment,
     post_comment::{
@@ -34,7 +35,7 @@ impl LinearClient {
             .user_agent(USER_AGENT)
             .default_headers(Self::build_headers(api_key))
             .build()
-            .expect("Can't build client");
+            .expect(CANT_BUILD_CLIENT);
         Self { http: client }
     }
 
@@ -47,11 +48,12 @@ impl LinearClient {
 
         if let Some(err) = response_body.errors {
             println!(
-                "Failed with:\n{}",
+                "{}{}",
+                FAILED_WITH,
                 serde_json::to_string_pretty(&err).unwrap()
             )
         }
-        let response_data: GetIssueResponse = response_body.data.expect("No response data");
+        let response_data: GetIssueResponse = response_body.data.expect(NO_RESPONSE_DATA);
         AnyOk(response_data.issue)
     }
 
@@ -59,13 +61,13 @@ impl LinearClient {
         &self,
         issue_key: &String,
         body: &String,
-        dont_subscribe: &Option<bool>,
+        dont_subscribe: &bool,
     ) -> Result<PostCommentCommentCreate, AnyError> {
         let variables = PostCommentVariables {
             input: CommentCreateInput {
                 body: Some(body.to_string()),
                 issue_id: Some(issue_key.to_string()),
-                do_not_subscribe_to_issue: dont_subscribe.to_owned(),
+                do_not_subscribe_to_issue: Some(dont_subscribe.to_owned()),
                 body_data: None,
                 create_as_user: None,
                 create_on_synced_slack_thread: None,
@@ -88,12 +90,11 @@ impl LinearClient {
             post_graphql_blocking::<PostComment, _>(&self.http, LINEAR_URL, variables).unwrap();
         if let Some(err) = response_body.errors {
             println!(
-                "Failed with:\n{}",
+                "{}{}",
+                FAILED_WITH,
                 serde_json::to_string_pretty(&err).unwrap()
             );
-            return Err(any_macro!(
-                "Failed to post a comment to linear: {issue_key:}",
-            ));
+            return Err(any_macro!("{}{}", FAILED_TO_POST, issue_key));
         }
         let response_data: PostCommentResponseData = response_body.data.unwrap();
 

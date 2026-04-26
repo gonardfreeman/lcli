@@ -1,9 +1,10 @@
 mod clients;
 mod config;
+mod constants;
 mod models;
 mod utils;
 
-use anyhow::{Error as AnyError, Ok as AnyOk, anyhow};
+use anyhow::{Error as AnyError, Ok as AnyOk};
 use pico_args::Arguments;
 
 use crate::clients::{cli_client::Commands, linear_client::LinearClient};
@@ -26,7 +27,7 @@ fn parse_args(args: &mut Arguments) -> Result<Args, AnyError> {
 }
 
 fn main() -> Result<(), AnyError> {
-    env_logger::init();
+    // env_logger::init();
     let mut pargs = Arguments::from_env();
     let args = parse_args(&mut pargs)?;
 
@@ -37,28 +38,4 @@ fn main() -> Result<(), AnyError> {
     let commander = Commands::new(&args, pargs, &linear_client);
 
     commander.execute()
-    // let cli = Lcli::parse();
-    // match &cli.command {
-    //     Commands::Get { issue_key } => {
-    //         let linear_issue = linear_client.get_comment(issue_key);
-    //         match linear_issue {
-    //             Ok(issue) => print_linear_results(&LinearResponseData::GetIssueIssue(issue)),
-    //             Err(error) => println!("Error getting issue: {error:?}"),
-    //         }
-    //     }
-    //     Commands::PostComment {
-    //         issue_key,
-    //         body,
-    //         dont_subscribe,
-    //     } => {
-    //         let comment = linear_client.post_comment(issue_key, body, dont_subscribe);
-    //         match comment {
-    //             Ok(comment_response) => print_linear_results(
-    //                 &LinearResponseData::PostCommentCommentCreate(comment_response),
-    //             ),
-    //             Err(error) => println!("Error posting comment: {error:?}"),
-    //         }
-    //     }
-    // }
-    // AnyOk(())
 }

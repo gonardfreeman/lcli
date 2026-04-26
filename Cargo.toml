@@ -5,12 +5,17 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.102"
-env_logger = "0.11.9"
 graphql_client = { version = "0.16.0", features = ["reqwest-blocking"] }
-log = "0.4.29"
 prettytable = "0.10.0"
 reqwest = { version = "0.12", default-features=false,features = ["blocking", "json", "rustls-tls"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 chrono = { version = "0.4", features = ["serde"] }
 pico-args = "0.5.0"
+
+[profile.release]
+codegen-units = 1
+strip = true
+opt-level = "z"
+lto = true
+panic = "abort"
