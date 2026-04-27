@@ -1,17 +1,37 @@
-use graphql_client::GraphQLQuery;
+use serde::{Deserialize, Serialize};
 
-use chrono::{DateTime as ChronoDateTime, Utc};
-use serde_json::Value as JSON;
+#[derive(Serialize, Debug)]
+pub struct PostCommentInput {
+    pub body: Option<String>,
+    #[serde(rename = "issueId")]
+    pub issue_id: String,
+    #[serde(rename = "doNotSubscribeToIssue")]
+    pub do_not_subscribe_to_issue: bool,
+}
 
-type DateTime = ChronoDateTime<Utc>;
+#[derive(Serialize, Debug)]
+pub struct CreateCommentInput {
+    pub input: PostCommentInput,
+}
 
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "src/config/linear.graphql",
-    query_path = "src/config/post_comment.graphql",
-    response_derives = "Debug",
-    variables_derives = "Debug",
-    scalars = "DateTime, JSON",
-    skip_serializing_none
-)]
-pub struct PostComment;
+#[derive(Deserialize, Debug)]
+pub struct Comment {
+    pub id: String,
+    #[serde(rename = "issueId")]
+    pub issue_id: Option<String>,
+    pub body: String,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct CreateComment {
+    // #[serde(rename = "lastSyncId")]
+    // pub last_sync_id: f64,
+    // pub success: bool,
+    pub comment: Comment,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct PostCommentResponse {
+    #[serde(rename = "commentCreate")]
+    pub comment_create: CreateComment,
+}
