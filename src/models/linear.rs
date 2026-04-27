@@ -19,12 +19,14 @@ pub struct LinearResponse<T> {
     pub errors: Option<Vec<LinearError>>,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct LinearError {
     pub message: String,
     pub extensions: Option<LinearErrorExtensions>,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct LinearErrorExtensions {
     pub code: String,
