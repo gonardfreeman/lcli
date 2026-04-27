@@ -16,9 +16,14 @@ pub fn print_linear_results(data: &LinearData) {
         LinearData::PostCommentCommentCreate(post_comment_result) => {
             table.set_titles(row!(b => "id", "issue_id", "body"));
             table.add_row(row!(
-                post_comment_result.comment.id,
-                post_comment_result.comment.issue_id.clone().unwrap(),
-                post_comment_result.comment.body
+                post_comment_result.comment_create.comment.id,
+                post_comment_result
+                    .comment_create
+                    .comment
+                    .issue_id
+                    .clone()
+                    .unwrap(),
+                post_comment_result.comment_create.comment.body
             ));
         }
     }

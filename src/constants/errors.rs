@@ -1,10 +1,4 @@
 pub const UNKNOWN_PARAM: &str = "Unknown param";
 pub const NO_ISSUE_KEY: &str = "No issue key provided";
 pub const NO_INPUT_ARGS: &str = "No input args provided";
-pub const ERROR_GETTING_ISSUE: &str = "Error getting issue:";
-pub const FAILED_WITH: &str = "Failed with:\n";
-pub const FAILED_TO_POST: &str = "Failed to post a comment to linear:";
-pub const CANT_BUILD_CLIENT: &str = "Can't build client";
-pub const NO_RESPONSE_DATA: &str = "No response data";
-pub const ERROR_POSTING_COMMENT: &str = "Error posting comment:";
 pub const MISSING_COMMENT_BODY: &str = "Missing comment text";

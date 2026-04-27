@@ -23,9 +23,15 @@ pub struct Comment {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct PostCommentResponse {
-    #[serde(rename = "lastSyncId")]
-    pub last_sync_id: f64,
-    pub success: bool,
+pub struct CreateComment {
+    // #[serde(rename = "lastSyncId")]
+    // pub last_sync_id: f64,
+    // pub success: bool,
     pub comment: Comment,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct PostCommentResponse {
+    #[serde(rename = "commentCreate")]
+    pub comment_create: CreateComment,
 }

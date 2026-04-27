@@ -49,11 +49,13 @@ impl<'a> Commands<'a> {
                 let get_issue_response = self.network_client.get_issue(issue_key);
                 match get_issue_response {
                     Ok(response_body) => {
-                        println!("{}", response_body);
                         let parsed: LinearResponse<GetIssueResponse> =
                             serde_json::from_str(&response_body).expect("Can't parse JSON");
                         if let Some(issue) = parsed.data {
                             print_linear_results(&LinearData::GetIssueIssue(issue));
+                        }
+                        if let Some(issue_errors) = parsed.errors {
+                            println!("{:?}", issue_errors);
                         }
                         AnyOk(())
                     }
@@ -67,8 +69,6 @@ impl<'a> Commands<'a> {
     fn post_comment(&self) -> Result<(), AnyError> {
         match self.get_issue_key() {
             Ok(issue_key) => {
-                println!("Issue: {}", issue_key);
-                println!("Comment body: {:?}", self.rest);
                 let comment_body = self
                     .rest
                     .get(1..)
@@ -87,6 +87,9 @@ impl<'a> Commands<'a> {
                             print_linear_results(&LinearData::PostCommentCommentCreate(
                                 comment_response,
                             ));
+                        }
+                        if let Some(comment_errors) = parsed.errors {
+                            println!("{:?}", comment_errors);
                         }
                         AnyOk(())
                     }
