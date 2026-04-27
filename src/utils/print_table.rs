@@ -1,25 +1,19 @@
-use crate::models::comment::post_comment::PostCommentCommentCreate;
-use crate::models::issue::get_issue::GetIssueIssue;
+use crate::models::linear::LinearData;
 use prettytable::*;
 
-pub enum LinearResponseData {
-    GetIssueIssue(GetIssueIssue),
-    PostCommentCommentCreate(PostCommentCommentCreate),
-}
-
-pub fn print_linear_results(data: &LinearResponseData) {
+pub fn print_linear_results(data: &LinearData) {
     let mut table = prettytable::Table::new();
     table.set_format(*prettytable::format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
     match data {
-        LinearResponseData::GetIssueIssue(issue) => {
+        LinearData::GetIssueIssue(issue) => {
             table.set_titles(row!(b => "id", "title", "description"));
             table.add_row(row!(
-                issue.id,
-                issue.title,
-                issue.description.clone().unwrap()
+                issue.issue.id,
+                issue.issue.title,
+                issue.issue.description.clone().unwrap()
             ));
         }
-        LinearResponseData::PostCommentCommentCreate(post_comment_result) => {
+        LinearData::PostCommentCommentCreate(post_comment_result) => {
             table.set_titles(row!(b => "id", "issue_id", "body"));
             table.add_row(row!(
                 post_comment_result.comment.id,
@@ -28,5 +22,6 @@ pub fn print_linear_results(data: &LinearResponseData) {
             ));
         }
     }
+
     table.printstd();
 }

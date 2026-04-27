@@ -1,9 +1,13 @@
-use graphql_client::GraphQLQuery;
+use serde::Deserialize;
 
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "src/config/linear.graphql",
-    query_path = "src/config/get_query.graphql",
-    response_derives = "Debug"
-)]
-pub struct GetIssue;
+#[derive(Deserialize, Debug)]
+pub struct Issue {
+    pub id: String,
+    pub title: String,
+    pub description: Option<String>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct GetIssueResponse {
+    pub issue: Issue,
+}

@@ -1,5 +1,4 @@
 mod clients;
-mod config;
 mod constants;
 mod models;
 mod utils;
@@ -7,7 +6,7 @@ mod utils;
 use anyhow::{Error as AnyError, Ok as AnyOk};
 use pico_args::Arguments;
 
-use crate::clients::{cli_client::Commands, linear_client::LinearClient};
+use crate::clients::{cli::Commands, network::NetworkClient};
 
 #[derive(Debug)]
 struct Args {
@@ -27,13 +26,10 @@ fn parse_args(args: &mut Arguments) -> Result<Args, AnyError> {
 }
 
 fn main() -> Result<(), AnyError> {
-    // env_logger::init();
     let mut pargs = Arguments::from_env();
     let args = parse_args(&mut pargs)?;
 
-    let linear_api_token =
-        std::env::var("LINEAR_API_KEY").expect("Missing LINEAR_API_KEY in your env");
-    let linear_client = LinearClient::new(&linear_api_token);
+    let linear_client = NetworkClient::new();
 
     let commander = Commands::new(&args, pargs, &linear_client);
 
